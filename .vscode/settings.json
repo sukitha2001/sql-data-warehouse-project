@@ -1,29 +1,13 @@
 {
     "sqltools.connections": [
         {
-            "mysqlOptions": {
-                "authProtocol": "xprotocol",
-                "enableSsl": "Disabled"
-            },
-            "ssh": "Disabled",
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 33060,
-            "driver": "MySQL",
-            "name": "data_wearhouse_project",
-            "database": "demo",
-            "username": "root",
-            "password": "root",
-            "connectionTimeout": 30
-        },
-        {
             "ssh": "Disabled",
             "previewLimit": 50,
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
-            "name": "DataWearhouseProject",
-            "database": "demo",
+            "name": "DataWarehouse",
+            "database": "DataWarehouse",
             "username": "sukitharathnayake",
             "connectionTimeout": 50,
             "password": ""
