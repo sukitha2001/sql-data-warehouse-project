@@ -1,8 +1,12 @@
 CREATE OR REPLACE PROCEDURE bronze.load_bronze()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_row_count INT;
 BEGIN
+    RAISE NOTICE 'Starting load of Bronze layer...';
 
+    --Recreate Tables
     DROP TABLE IF EXISTS bronze.crm_cust_info;
     CREATE TABLE bronze.crm_cust_info (
         cst_id INT,
@@ -25,7 +29,6 @@ BEGIN
         prd_end_dt TIMESTAMP
     );
 
-
     DROP TABLE IF EXISTS bronze.crm_sales_details;
     CREATE TABLE bronze.crm_sales_details (
         sls_ord_num VARCHAR(50),
@@ -38,7 +41,6 @@ BEGIN
         sls_quantity INT, 
         sls_price INT
     );
-
 
     DROP TABLE IF EXISTS bronze.erp_1oc_a101;
     CREATE TABLE bronze.erp_1oc_a101 (
@@ -61,79 +63,65 @@ BEGIN
         maintenance VARCHAR(50)
     );
 
+    RAISE NOTICE 'Tables recreated successfully. Starting bulk loads...';
+
+    -- 2. Load Data
+
     TRUNCATE TABLE bronze.crm_cust_info;
     COPY bronze.crm_cust_info
     FROM '/Users/sukitharathnayake/CodeRepo/sql-data-warehouse-project/datasets/source_crm/cust_info.csv'
-    WITH (
-        FORMAT CSV,
-        HEADER
-    );
-
-    SELECT * FROM bronze.crm_cust_info;
-
-    SELECT COUNT(*) FROM bronze.crm_cust_info;
+    WITH (FORMAT CSV, HEADER);
+    
+   
+    SELECT COUNT(*) INTO v_row_count FROM bronze.crm_cust_info;
+    RAISE NOTICE 'Loaded % rows into bronze.crm_cust_info', v_row_count;
 
 
     TRUNCATE TABLE bronze.crm_prd_info;
     COPY bronze.crm_prd_info
     FROM '/Users/sukitharathnayake/CodeRepo/sql-data-warehouse-project/datasets/source_crm/prd_info.csv'
-    WITH (
-        FORMAT CSV,
-        HEADER
-    );
+    WITH (FORMAT CSV, HEADER);
 
-    SELECT * FROM bronze.crm_prd_info;
-
-    SELECT COUNT(*) FROM bronze.crm_prd_info;
+    SELECT COUNT(*) INTO v_row_count FROM bronze.crm_prd_info;
+    RAISE NOTICE 'Loaded % rows into bronze.crm_prd_info', v_row_count;
 
 
     TRUNCATE TABLE bronze.crm_sales_details;
     COPY bronze.crm_sales_details
     FROM '/Users/sukitharathnayake/CodeRepo/sql-data-warehouse-project/datasets/source_crm/sales_details.csv'
-    WITH (
-        FORMAT CSV,
-        HEADER
-    );
+    WITH (FORMAT CSV, HEADER);
 
-    SELECT * FROM bronze.crm_sales_details;
+    SELECT COUNT(*) INTO v_row_count FROM bronze.crm_sales_details;
+    RAISE NOTICE 'Loaded % rows into bronze.crm_sales_details', v_row_count;
 
-    SELECT COUNT(*) FROM bronze.crm_sales_details;
 
     TRUNCATE TABLE bronze.erp_1oc_a101;
     COPY bronze.erp_1oc_a101
     FROM '/Users/sukitharathnayake/CodeRepo/sql-data-warehouse-project/datasets/source_erp/LOC_A101.csv'
-    WITH (
-        FORMAT CSV,
-        HEADER
-    );
+    WITH (FORMAT CSV, HEADER);
 
-    SELECT * FROM bronze.erp_1oc_a101;
-
-    SELECT COUNT(*) FROM bronze.erp_1oc_a101;
+    SELECT COUNT(*) INTO v_row_count FROM bronze.erp_1oc_a101;
+    RAISE NOTICE 'Loaded % rows into bronze.erp_1oc_a101', v_row_count;
 
 
     TRUNCATE TABLE bronze.erp_cust_az12;
     COPY bronze.erp_cust_az12
     FROM '/Users/sukitharathnayake/CodeRepo/sql-data-warehouse-project/datasets/source_erp/CUST_AZ12.csv'
-    WITH (
-        FORMAT CSV,
-        HEADER
-    );
+    WITH (FORMAT CSV, HEADER);
 
-    SELECT * FROM bronze.erp_cust_az12;
+    SELECT COUNT(*) INTO v_row_count FROM bronze.erp_cust_az12;
+    RAISE NOTICE 'Loaded % rows into bronze.erp_cust_az12', v_row_count;
 
-    SELECT COUNT(*) FROM bronze.erp_cust_az12;
 
     TRUNCATE TABLE bronze.erp_px_cat_g1v2;
     COPY bronze.erp_px_cat_g1v2
     FROM '/Users/sukitharathnayake/CodeRepo/sql-data-warehouse-project/datasets/source_erp/PX_CAT_G1V2.csv'
-    WITH (
-        FORMAT CSV,
-        HEADER
-    );  
+    WITH (FORMAT CSV, HEADER);  
 
-    SELECT * FROM bronze.erp_px_cat_g1v2;
-    SELECT COUNT(*) FROM bronze.erp_px_cat_g1v2;
+    SELECT COUNT(*) INTO v_row_count FROM bronze.erp_px_cat_g1v2;
+    RAISE NOTICE 'Loaded % rows into bronze.erp_px_cat_g1v2', v_row_count;
+
+    RAISE NOTICE 'Bronze layer load complete!';
 
 END;
 $$;
