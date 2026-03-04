@@ -11,12 +11,12 @@ CREATE SCHEMA IF NOT EXISTS bronze;
 DROP TABLE IF EXISTS bronze.crm_cust_info;
 CREATE TABLE bronze.crm_cust_info (
     cst_id INT,
-    est_key VARCHAR(50),
+    cst_key VARCHAR(50),
     cst_firstname VARCHAR(50),
     cst_lastname VARCHAR(50),
     cst_material_status VARCHAR(50), 
     cst_gndr VARCHAR(50),
-    est_create_date DATE
+    cst_create_date DATE
 );
 
 DROP TABLE IF EXISTS bronze.crm_prd_info;
