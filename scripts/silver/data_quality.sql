@@ -72,3 +72,6 @@ SELECT
     (LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) - INTERVAL '1 day' AS prd_end_dt_test
 FROM bronze.crm_prd_info
 WHERE prd_key IN ('AC-HE-HL-U509-R', 'AC-HE-HL-U509');
+
+
+SELECT * FROM silver.crm_prd_info;

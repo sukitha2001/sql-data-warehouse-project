@@ -54,14 +54,3 @@ SELECT
     CAST((LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) - INTERVAL '1 day' AS DATE) AS prd_end_dt
 FROM bronze.crm_prd_info;
 
-
-
-/*
-WHERE REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') NOT IN (
-SELECT DISTINCT id
-FROM bronze.erp_px_cat_g1v2
-);
-*/
-
-
-SELECT sls_prd_key FROM bronze.crm_sales_details
