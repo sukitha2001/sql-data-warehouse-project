@@ -1,38 +1,3 @@
---checking for duplicates in the primary key column (cst_id) and ensuring there are no null values in that column. The expectation is that there should be no results returned, indicating that there are no duplicates or null values in the cst_id column.
-
-SELECT *
-FROM(
-
-SELECT *,
-ROW_NUMBER () OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) as flag_last
-FROM bronze.crm_cust_info
-) a
-WHERE flag_last = 1;
-
-
---checking for white spaces in the cst_id column. The expectation is that there should be no results returned, indicating that there are no white spaces in the cst_id column.
-
-SELECT cst_firstname
-FROM bronze.crm_cust_info
-WHERE cst_firstname != TRIM(cst_firstname);
-
-SELECT cst_lastname
-FROM bronze.crm_cust_info
-WHERE cst_lastname != TRIM(cst_lastname);
-
-SELECT cst_gndr
-FROM bronze.crm_cust_info
-WHERE cst_gndr != TRIM(cst_gndr);
-
-SELECT cst_material_status
-FROM bronze.crm_cust_info
-WHERE cst_material_status != TRIM(cst_material_status);
-
-
---Data Standardization & Consistency
-
-SELECT DISTINCT cst_gndr
-FROM bronze.crm_cust_info;
 
 INSERT INTO silver.crm_cust_info(
     cst_id, cst_key,
@@ -62,6 +27,41 @@ FROM bronze.crm_cust_info
 ) a
 WHERE flag_last = 1;
 
+INSERT INTO silver.crm_prd_info(
+    prd_id,
+    cat_id,
+    prd_key,
+    prd_nm,
+    prd_cost,
+    prd_line,
+    prd_start_dt,
+    prd_end_dt)
+SELECT
+    prd_id,
+    --prd_key,
+    REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cat_id,
+    SUBSTRING(prd_key, 7) AS prd_key,
+    prd_nm,
+    COALESCE(prd_cost, 0) AS prd_cost,
+    CASE UPPER(TRIM(prd_line))
+     WHEN'M' THEN 'Mountain'
+     WHEN 'R' THEN 'Road'
+     WHEN 'S' THEN 'Other Sales'
+     WHEN 'T' THEN 'Touring'
+     ELSE 'n/a'
+    END AS prd_line,
+    CAST(prd_start_dt AS DATE) AS prd_start_dt,
+    CAST((LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt)) - INTERVAL '1 day' AS DATE) AS prd_end_dt
+FROM bronze.crm_prd_info;
 
 
 
+/*
+WHERE REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') NOT IN (
+SELECT DISTINCT id
+FROM bronze.erp_px_cat_g1v2
+);
+*/
+
+
+SELECT sls_prd_key FROM bronze.crm_sales_details
