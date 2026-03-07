@@ -119,4 +119,73 @@ or sls_quantity IS NULL
 or sls_price IS NULL
 ORDER BY sls_sales, sls_quantity, sls_price;
 
+SELECT
+    CASE 
+        WHEN cid LIKE 'NAS%' THEN SUBSTR(cid, 4)
+        ELSE cid
+    END AS cid,
+    
+    CASE 
+        WHEN bdate > CURRENT_DATE THEN NULL
+        ELSE bdate
+    END AS bdate,
+    
+    CASE 
+        WHEN UPPER(TRIM(gen)) = 'F' OR UPPER(TRIM(gen)) = 'FEMALE' THEN 'Female'
+        WHEN UPPER(TRIM(gen)) = 'M' OR UPPER(TRIM(gen)) = 'MALE' THEN 'Male'
+        ELSE 'n/a'
+    END AS gen
+    
+FROM bronze.erp_cust_az12;
+
+SELECT DISTINCT
+bdate
+FROM bronze.erp_cust_az12
+WHERE bdate < '1924-01-01' or bdate> CURRENT_DATE;
+
+
+SELECT DISTINCT
+gen
+FROM bronze.erp_cust_az12
+
+
+SELECT
+REPLACE(cid, '-', '') AS cid,
+CASE WHEN TRIM(cntry) = 'DE' THEN 'Germany'
+     WHEN TRIM(cntry) = 'US' OR TRIM(cntry) = 'USA' THEN 'United States'
+     WHEN TRIM(cntry) = '' OR TRIM(cntry) IS NULL THEN 'n/a'
+     ELSE TRIM(cntry) 
+END AS cntry
+FROM bronze.erp_1oc_a101;
+
+
+SELECT DISTINCT
+cntry AS old_cntry,
+CASE WHEN TRIM(cntry) = 'DE' THEN 'Germany'
+     WHEN TRIM(cntry) = 'US' OR TRIM(cntry) = 'USA' THEN 'United States'
+     WHEN TRIM(cntry) = '' OR TRIM(cntry) IS NULL THEN 'n/a'
+     ELSE TRIM(cntry) 
+END AS cntry
+FROM bronze.erp_1oc_a101
+
+
+SELECT DISTINCT cntry
+FROM silver.erp_1oc_a101
+ORDER BY cntry
+
+
+
+SELECT
+id,
+cat,
+subcat,
+maintenance
+FROM bronze.erp_px_cat_g1v2
+
+SELECT * FROM bronze.erp_px_cat_g1v2 WHERE cat != TRIM(cat) OR subcat != TRIM(subcat) OR maintenance != TRIM(maintenance);
+
+
+SELECT cat_id FROM silver.crm_prd_info
+
+select * from silver.erp_px_cat_g1v2
 

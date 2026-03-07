@@ -88,3 +88,52 @@ CASE WHEN sls_price IS NULL OR sls_price <= 0
      ELSE sls_price
 END AS sls_price
 FROM bronze.crm_sales_details;
+
+
+INSERT INTO silver.erp_cust_az12(
+    cid,
+    bdate,
+    gen)
+SELECT
+    CASE 
+        WHEN cid LIKE 'NAS%' THEN SUBSTR(cid, 4)
+        ELSE cid
+    END AS cid,
+    
+    CASE 
+        WHEN bdate > CURRENT_DATE THEN NULL
+        ELSE bdate
+    END AS bdate,
+    
+    CASE 
+        WHEN UPPER(TRIM(gen)) = 'F' OR UPPER(TRIM(gen)) = 'FEMALE' THEN 'Female'
+        WHEN UPPER(TRIM(gen)) = 'M' OR UPPER(TRIM(gen)) = 'MALE' THEN 'Male'
+        ELSE 'n/a'
+    END AS gen
+    
+FROM bronze.erp_cust_az12;   
+
+
+INSERT INTO silver.erp_1oc_a101(
+    cid,
+    cntry)
+SELECT
+REPLACE(cid, '-', '') AS cid,
+CASE WHEN TRIM(cntry) = 'DE' THEN 'Germany'
+     WHEN TRIM(cntry) = 'US' OR TRIM(cntry) = 'USA' THEN 'United States'
+     WHEN TRIM(cntry) = '' OR TRIM(cntry) IS NULL THEN 'n/a'
+     ELSE TRIM(cntry) 
+END AS cntry
+FROM bronze.erp_1oc_a101;
+
+INSERT INTO silver.erp_px_cat_g1v2(
+    id,
+    cat,
+    subcat,
+    maintenance)
+SELECT
+id,
+cat,
+subcat,
+maintenance
+FROM bronze.erp_px_cat_g1v2;
