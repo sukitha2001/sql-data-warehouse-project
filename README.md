@@ -10,7 +10,7 @@ This repository demonstrates an end-to-end data warehousing and analytics soluti
 
 This project implements the industry-standard **Medallion Architecture** to organize and process data efficiently:
 
-![Data Architecture Diagram](docs/data_architecture.png)
+![Data Architecture Diagram](docs/DataArchitecture_postgres.png)
 
 1. **Bronze Layer (Raw Data)**: Ingests and stores raw data as-is from source systems (e.g., ERP and CRM CSV files) into the SQL database.
 2. **Silver Layer (Cleansed Data)**: Focuses on data quality. This layer handles data cleansing, standardization, normalization, and resolving data quality issues to prepare it for analysis.
